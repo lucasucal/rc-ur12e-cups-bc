@@ -3,8 +3,10 @@ __pycache__/
 .venv/
 venv/
 
-# NEVER commit weights to this repo — they live on Hugging Face.
+# NEVER commit weights to this repo — they live on Hugging Face or /app/ckpt.
 weights/
+ckpt/*
+!ckpt/.keep
 *.pt
 *.safetensors
 *.ckpt

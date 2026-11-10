@@ -3,9 +3,9 @@
   "contract": "v0",
   "_comment_port": "Port your policy container serves on. The runner connects here.",
   "port": 8080,
-  "_comment_weights": "Public Hugging Face model repo. The runner mounts the pinned snapshot at /weights.",
+  "_comment_weights": "Local demo: tiny public pin so the runner still fetches /weights. ACT weights live in the image at /app/ckpt and also under /weights if you drop them there.",
   "weights": {
-    "repo_id": "PLACEHOLDER/rc-ur12e-cups-bc",
+    "repo_id": "sshleifer/tiny-gpt2",
     "revision": "main"
   }
 }

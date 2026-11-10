@@ -58,12 +58,15 @@ class _Handler(BaseHTTPRequestHandler):
             # BEFORE weights load. Never gate on readiness here.
             self._send_json(200, {})
         elif self.path == "/readyz":
-            self._send_json(200, {
+            body: Dict[str, Any] = {
                 "ready": self.server.ready.is_set(),
                 "contract": CONTRACT,
                 "schema_version": SCHEMA_VERSION,
                 "capabilities": dict(CAPABILITIES),
-            })
+            }
+            if self.server.load_error:
+                body["error"] = self.server.load_error
+            self._send_json(200, body)
         else:
             self._send_json(404, {"error": f"no route {self.path}"})
 
@@ -116,14 +119,18 @@ class PolicyServer(ThreadingHTTPServer):
         super().__init__(("0.0.0.0", port), _Handler)
         self.policy = policy
         self.ready = threading.Event()
+        self.load_error: Optional[str] = None
         self._load_thread = threading.Thread(target=self._load, daemon=True)
 
     def _load(self) -> None:
         try:
             self.policy.load()
         except Exception as exc:
-            print(f"[rc_sdk] load() FAILED: {exc}", flush=True)
-            raise
+            import traceback
+            traceback.print_exc()
+            self.load_error = f"{type(exc).__name__}: {exc}"
+            print(f"[rc_sdk] load() FAILED: {self.load_error}", flush=True)
+            return
         self.ready.set()
         print("[rc_sdk] ready", flush=True)
 
