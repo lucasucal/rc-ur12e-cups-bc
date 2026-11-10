@@ -13,6 +13,7 @@ N_TASKS = UNKNOWN_TASK + 1
 PROPRIO_DIM = 20
 IMAGE_SIZE = 224
 MAX_DELTA = 0.049
+CHUNK = 8
 
 
 def task_index(task_id: str | None) -> int:

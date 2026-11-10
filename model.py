@@ -4,7 +4,7 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from obs import IMAGE_SIZE, MAX_DELTA, N_TASKS, PROPRIO_DIM  # noqa: F401
+from obs import CHUNK, IMAGE_SIZE, MAX_DELTA, N_TASKS, PROPRIO_DIM  # noqa: F401
 
 __all__ = ["CupBCNet", "IMAGE_SIZE", "MAX_DELTA"]
 
@@ -29,12 +29,12 @@ class CupBCNet(nn.Module):
         self.head = nn.Sequential(
             nn.Linear(vis_dim + 128 + 32, 512), nn.ReLU(inplace=True),
             nn.Linear(512, 256), nn.ReLU(inplace=True),
-            nn.Linear(256, 7),
+            nn.Linear(256, CHUNK * 7),
         )
 
     def forward(self, image: torch.Tensor, proprio: torch.Tensor, task: torch.Tensor) -> torch.Tensor:
         x = torch.cat([self.backbone(image), self.proprio(proprio), self.task_emb(task)], dim=-1)
-        raw = self.head(x)
-        delta = MAX_DELTA * torch.tanh(raw[:, :6])
-        grip = torch.sigmoid(raw[:, 6:7])
-        return torch.cat([delta, grip], dim=-1)
+        raw = self.head(x).view(-1, CHUNK, 7)
+        delta = MAX_DELTA * torch.tanh(raw[..., :6])
+        grip = torch.sigmoid(raw[..., 6:7])
+        return torch.cat([delta, grip], dim=-1)  # B, CHUNK, 7
