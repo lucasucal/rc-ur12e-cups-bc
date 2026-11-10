@@ -1,0 +1,11 @@
+{
+  "_comment_contract": "Contract version. Fixed at v0 by docs/platform.md §6.1. Do not change unless told to.",
+  "contract": "v0",
+  "_comment_port": "Port your policy container serves on. The runner connects here.",
+  "port": 8080,
+  "_comment_weights": "Public Hugging Face model repo. The runner mounts the pinned snapshot at /weights.",
+  "weights": {
+    "repo_id": "PLACEHOLDER/rc-ur12e-cups-bc",
+    "revision": "main"
+  }
+}

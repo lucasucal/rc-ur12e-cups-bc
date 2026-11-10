@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# NEVER commit weights to this repo — they live on Hugging Face.
+weights/
+*.pt
+*.safetensors
+*.ckpt
